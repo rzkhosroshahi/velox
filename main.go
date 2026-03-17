@@ -11,12 +11,7 @@ import (
 	"github.com/rzkhosroshahi/velox/pkg/api"
 	"github.com/rzkhosroshahi/velox/pkg/db"
 	"github.com/rzkhosroshahi/velox/pkg/logger"
-	"go.uber.org/zap"
 )
-
-type App struct {
-	logger *zap.Logger
-}
 
 func main() {
 	conf, err := config.Setup()
