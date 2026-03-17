@@ -6,11 +6,17 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/rzkhosroshahi/velox/api"
 	"github.com/rzkhosroshahi/velox/config"
+	"github.com/rzkhosroshahi/velox/internal/user"
+	"github.com/rzkhosroshahi/velox/pkg/api"
 	"github.com/rzkhosroshahi/velox/pkg/db"
 	"github.com/rzkhosroshahi/velox/pkg/logger"
+	"go.uber.org/zap"
 )
+
+type App struct {
+	logger *zap.Logger
+}
 
 func main() {
 	conf, err := config.Setup()
@@ -20,14 +26,18 @@ func main() {
 
 	logger.Init(conf.App.Env)
 
-	_, err = db.New(&conf.DataBase)
+	db, err := db.New(&conf.DataBase)
 	if err != nil {
 		log.Fatalln(err)
 		log.Panic("can not connect to the database!")
 	}
 	logger.Log.Info("connected to the database!")
 
-	r := api.NewRouter()
+	userStore := user.NewUserStore(db)
+	userService := user.NewService(userStore)
+	userHandler := user.NewHandler(userService)
+
+	r := api.NewRouter(userHandler)
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.App.Port),
 		Handler:      r,

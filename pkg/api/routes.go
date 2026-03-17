@@ -8,11 +8,11 @@ import (
 	"github.com/rzkhosroshahi/velox/internal/user"
 )
 
-func NewRouter() chi.Router {
+func NewRouter(userHandler *user.Handler) chi.Router {
 	r := chi.NewRouter()
 
 	r.Route("/api/v1", func(r chi.Router) {
-		r.Mount("/users", user.UsersRoutes())
+		r.Mount("/users", userHandler.Routes())
 	})
 
 	r.Get("/health", HealthCheck)

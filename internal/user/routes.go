@@ -2,10 +2,10 @@ package user
 
 import "github.com/go-chi/chi/v5"
 
-func UsersRoutes() chi.Router {
+func (h *Handler) Routes() chi.Router {
 	r := chi.NewRouter()
 
-	r.Get("/", GetUsers)
+	r.Post("/register", h.Register)
 
 	return r
 }
