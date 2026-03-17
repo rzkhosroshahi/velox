@@ -1,0 +1,15 @@
+version: '2.40.3'
+
+services:
+  db:
+    container_name: "veloxDB"
+    image: postgres:17-alpine
+    volumes:
+      - "./database/postgres-data:/var/lib/postgresql/data:rw"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: "velox_db"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "secret"
+    restart: unless-stopped

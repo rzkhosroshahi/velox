@@ -22,6 +22,7 @@ type DataBaseConfig struct {
 	User     string
 	Password string
 	Name     string
+	SSLMODE  string
 }
 
 func Setup() (*Config, error) {

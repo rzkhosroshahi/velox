@@ -8,18 +8,26 @@ import (
 
 	"github.com/rzkhosroshahi/velox/api"
 	"github.com/rzkhosroshahi/velox/config"
+	"github.com/rzkhosroshahi/velox/pkg/db"
 	"github.com/rzkhosroshahi/velox/pkg/logger"
 )
 
 func main() {
 	conf, err := config.Setup()
 	if err != nil {
-		fmt.Println("error loading config!")
+		log.Panic("error loading config!")
 	}
+
 	logger.Init(conf.App.Env)
 
-	r := api.NewRouter()
+	_, err = db.New(&conf.DataBase)
+	if err != nil {
+		log.Fatalln(err)
+		log.Panic("can not connect to the database!")
+	}
+	logger.Log.Info("connected to the database!")
 
+	r := api.NewRouter()
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", conf.App.Port),
 		Handler:      r,
@@ -27,9 +35,10 @@ func main() {
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
 	}
+
 	fmt.Printf("app is running on port %d", conf.App.Port)
 	err = server.ListenAndServe()
 	if err != nil {
-		log.Fatalf("setup sever failed!")
+		log.Panic("setup sever failed!")
 	}
 }

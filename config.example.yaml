@@ -8,3 +8,4 @@ database:
   user: postgres
   password: secret
   name: velox_db
+  sslmode: disable
