@@ -2,11 +2,12 @@ package logger
 
 import "go.uber.org/zap"
 
-func Init(env string) *zap.Logger {
+var Log *zap.Logger
+
+func Init(env string) {
 	if env == "production" {
-		Log, _ := zap.NewProduction()
-		return Log
+		Log, _ = zap.NewProduction()
+	} else {
+		Log, _ = zap.NewDevelopment()
 	}
-	Log, _ := zap.NewDevelopment()
-	return Log
 }

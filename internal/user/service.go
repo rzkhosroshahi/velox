@@ -3,23 +3,22 @@ package user
 import (
 	"context"
 
-	"go.uber.org/zap"
+	"github.com/rzkhosroshahi/velox/pkg/logger"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type Service struct {
 	userStore *UserStore
-	logger    *zap.Logger
 }
 
-func NewService(userStore *UserStore, logger *zap.Logger) *Service {
-	return &Service{userStore: userStore, logger: logger}
+func NewService(userStore *UserStore) *Service {
+	return &Service{userStore: userStore}
 }
 
 func (s *Service) CreateUser(ctx context.Context, params CreateUserRequest) (User, error) {
 	hashed, err := bcrypt.GenerateFromPassword([]byte(params.Password), bcrypt.DefaultCost)
 	if err != nil {
-		s.logger.Error(err.Error())
+		logger.Log.Error(err.Error())
 		return User{}, err
 	}
 

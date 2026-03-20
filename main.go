@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/rzkhosroshahi/velox/app"
+	"github.com/rzkhosroshahi/velox/pkg/logger"
 )
 
 func main() {
@@ -19,7 +20,7 @@ func main() {
 		WriteTimeout: 30 * time.Second,
 	}
 
-	app.Logger.Sugar().Infof("app is running on port %d", app.Config.App.Port)
+	logger.Log.Sugar().Infof("app is running on port %d", app.Config.App.Port)
 	err := server.ListenAndServe()
 	if err != nil {
 		log.Panic("setup sever failed!")
