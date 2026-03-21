@@ -1,6 +1,7 @@
 app:
   port: 8080
   env: development
+  jwt_secret: your-secret-key-here
 
 database:
   host: localhost
@@ -9,3 +10,8 @@ database:
   password: secret
   name: velox_db
   sslmode: disable
+
+redis:
+  addr: localhost:6379
+  password: ""
+  db: 0

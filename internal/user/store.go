@@ -31,6 +31,18 @@ type CreateUserRequest struct {
 	Password string `json:"password"`
 }
 
+type LoginParams struct {
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	UserAgent string `json:"userAgent"`
+	IPAddress string `json:"IPAddress"`
+}
+
+type LoginRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 type UserStore struct {
 	db *sqlx.DB
 }
@@ -42,6 +54,18 @@ func NewUserStore(db *sqlx.DB) *UserStore {
 func (us *UserStore) GetUserByID(ctx context.Context, id uuid.UUID) (User, error) {
 	var user User
 	err := us.db.GetContext(ctx, &user, "SELECT * FROM users WHERE id = $1", id)
+	return user, err
+}
+
+func (us *UserStore) GetUserIdentityByUserID(ctx context.Context, id uuid.UUID) (UserIdentity, error) {
+	var userIdentity UserIdentity
+	err := us.db.GetContext(ctx, &userIdentity, "SELECT * FROM user_identities WHERE user_id = $1", id)
+	return userIdentity, err
+}
+
+func (us *UserStore) GetUserByEmail(ctx context.Context, email string) (User, error) {
+	var user User
+	err := us.db.GetContext(ctx, &user, "SELECT * FROM users WHERE email = $1", email)
 	return user, err
 }
 
@@ -93,4 +117,16 @@ func (us *UserStore) CreateUserWithIdentity(ctx context.Context, user *User, ide
 	}
 
 	return createdUser, nil
+}
+
+func (us *UserStore) GetIdentityByEmail(ctx context.Context, email string) (UserIdentity, error) {
+	user, err := us.GetUserByEmail(ctx, email)
+	if err != nil {
+		return UserIdentity{}, err
+	}
+	identity, err := us.GetUserIdentityByUserID(ctx, user.ID)
+	if err != nil {
+		return UserIdentity{}, err
+	}
+	return identity, err
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"github.com/rzkhosroshahi/velox/config"
+	"github.com/rzkhosroshahi/velox/pkg/logger"
 )
 
 func New(conf *config.DataBaseConfig) (*sqlx.DB, error) {
@@ -18,6 +19,7 @@ func New(conf *config.DataBaseConfig) (*sqlx.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	logger.Log.Info("connected to the database!")
 
 	return db, nil
 }

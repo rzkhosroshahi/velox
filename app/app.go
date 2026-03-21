@@ -5,9 +5,11 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/rzkhosroshahi/velox/api"
 	"github.com/rzkhosroshahi/velox/config"
+	"github.com/rzkhosroshahi/velox/internal/token"
 	"github.com/rzkhosroshahi/velox/internal/user"
 	"github.com/rzkhosroshahi/velox/pkg/db"
 	"github.com/rzkhosroshahi/velox/pkg/logger"
+	"github.com/rzkhosroshahi/velox/pkg/redis"
 )
 
 type Application struct {
@@ -28,12 +30,17 @@ func NewApplication() *Application {
 	if err != nil {
 		logger.Log.Panic("can not connect to the database!")
 	}
-	logger.Log.Info("connected to the database!")
 
+	redisClient, err := redis.New(&conf.Redis)
+	if err != nil {
+		logger.Log.Panic("can not connect to the redis!")
+	}
+	// token service
+	tokenService := token.NewService(redisClient, conf.App.JWTSecretKey)
 	// user service
 	userStore := user.NewUserStore(db)
 	userService := user.NewService(userStore)
-	userHandler := user.NewHandler(userService)
+	userHandler := user.NewHandler(userService, tokenService)
 
 	r := api.NewRouter(userHandler)
 

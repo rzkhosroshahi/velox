@@ -9,11 +9,13 @@ import (
 type Config struct {
 	App      AppConfig
 	DataBase DataBaseConfig
+	Redis    RedisConfig
 }
 
 type AppConfig struct {
-	Port int
-	Env  string
+	Port         int
+	Env          string
+	JWTSecretKey string
 }
 
 type DataBaseConfig struct {
@@ -23,6 +25,12 @@ type DataBaseConfig struct {
 	Password string
 	Name     string
 	SSLMODE  string
+}
+
+type RedisConfig struct {
+	Addr     string
+	Password string
+	DB       int
 }
 
 func Setup() (*Config, error) {
