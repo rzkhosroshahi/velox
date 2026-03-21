@@ -4,9 +4,14 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+const (
+	ScopeAuth = "authentication"
+)
+
 type Claims struct {
-	UserID    string `son:"userId"`
-	SessionID string ` json:"sessionId"`
+	UserID    string `json:"userId"`
+	SessionID string `json:"sessionId"`
+	Scope     string `json:"scope"`
 	jwt.RegisteredClaims
 }
 
@@ -24,7 +29,7 @@ type TokenPair struct {
 }
 
 type RefreshRequest struct {
-	RefreshToken string `json:"refresh_token"`
+	RefreshToken string `json:"refreshToken"`
 }
 
 type GenerateParams struct {

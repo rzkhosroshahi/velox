@@ -37,12 +37,13 @@ func NewApplication() *Application {
 	}
 	// token service
 	tokenService := token.NewService(redisClient, conf.App.JWTSecretKey)
+	tokenHandler := token.NewHandler(tokenService)
 	// user service
 	userStore := user.NewUserStore(db)
 	userService := user.NewService(userStore)
 	userHandler := user.NewHandler(userService, tokenService)
 
-	r := api.NewRouter(userHandler)
+	r := api.NewRouter(userHandler, tokenHandler)
 
 	app := &Application{
 		db:     db,

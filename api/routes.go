@@ -5,14 +5,20 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/rzkhosroshahi/velox/internal/token"
 	"github.com/rzkhosroshahi/velox/internal/user"
 )
 
-func NewRouter(userHandler *user.Handler) chi.Router {
+func NewRouter(userHandler *user.Handler, tokenHandler *token.Handler) chi.Router {
 	r := chi.NewRouter()
 
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Mount("/users", userHandler.Routes())
+
+		r.Group(func(r chi.Router) {
+			r.Use(AuthMiddleware(tokenHandler.Service))
+			r.Mount("/auth", tokenHandler.Routes())
+		})
 	})
 
 	r.Get("/health", HealthCheck)
